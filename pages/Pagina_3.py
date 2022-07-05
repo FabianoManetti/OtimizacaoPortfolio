@@ -38,6 +38,9 @@ def main():
                     st.session_state.ativos_remover.append(ativo)
                 else:
                     continue
+                    
+            st.info(portfolio_final)
+            st.info(st.session_state.ativos_remover)
 
         if botao_remover:
             st.session_state.remover_pesos.append(portfolio_pesos_final[portfolio_final.index(ajuste_ticker)])
