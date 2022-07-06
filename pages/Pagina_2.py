@@ -96,7 +96,13 @@ def main():
 
     if round(np.sum(portfolio_pesos_final), 2) != 1:
         st.info(f'Percentual atual do portfólio: {np.sum(portfolio_pesos_final * 100)}%. Os ativos inseridos devem representar 100 %.')
-
+    
+    if 'teste' not in st.session_state:
+        st.session_state.teste = []
+        st.session_state.append(portfolio_final)
+    
+    st.info(st.session_state.teste)
+        
     st.dataframe(dt)
 
     data_final = datetime.today().strftime('%Y-%m-%d')
