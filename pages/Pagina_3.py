@@ -8,6 +8,8 @@ cadastro_fii = pd.read_csv('fundosListados.csv', sep = ',', encoding = 'utf-8')
 cadastro_etf = pd.read_csv('etf_bdr.csv', sep = ';', encoding = 'latin-1')
 cadastro_stocks = pd.read_csv('cadastro_stocks.csv')
 
+st.info(portfolio_final)
+
 def main():
 
     st.title("Otimização Portfólio")
