@@ -7,12 +7,13 @@ cadastro_fii = pd.read_csv('fundosListados.csv', sep = ',', encoding = 'utf-8')
 cadastro_etf = pd.read_csv('etf_bdr.csv', sep = ';', encoding = 'latin-1')
 cadastro_stocks = pd.read_csv('cadastro_stocks.csv')
 
-st.info(lista_port_pesos_final_temp)
+st.info(st.session_state.port_pesos_final)
 lista_port_final_temp = []
 lista_port_pesos_final_temp = []
 
-lista_port_pesos_final_temp.append(lista_port_pesos_final_temp)
+lista_port_pesos_final_temp.append(st.session_state.port_pesos_final)
 st.info(lista_port_pesos_final_temp)
+
 try:
     if st.session_state.port_final:
         lista_port_final_temp.append(st.session_state.port_final)
