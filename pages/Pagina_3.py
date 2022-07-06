@@ -8,7 +8,9 @@ cadastro_fii = pd.read_csv('fundosListados.csv', sep = ',', encoding = 'utf-8')
 cadastro_etf = pd.read_csv('etf_bdr.csv', sep = ';', encoding = 'latin-1')
 cadastro_stocks = pd.read_csv('cadastro_stocks.csv')
 
-st.info(st.session_state.teste)
+lista_port_final
+st.info(st.session_state.port_final)
+st.info(portfolio_pesos_final)
 
 def main():
 
@@ -41,8 +43,6 @@ def main():
                 else:
                     continue
 
-            st.info(st.session_state.ativos_remover)
-            st.info(portfolio_final)
         if botao_remover:
             st.session_state.remover_pesos.append(portfolio_pesos_final[portfolio_final.index(ajuste_ticker)])
 
