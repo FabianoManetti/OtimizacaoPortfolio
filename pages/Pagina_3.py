@@ -22,6 +22,8 @@ try:
 except:
     pass
 
+st.info(lista_port_final)
+
 lista_port_final = lista_port_final[0]
 lista_port_pesos_final = lista_port_pesos_final[0]
 
