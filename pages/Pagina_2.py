@@ -142,7 +142,7 @@ def main():
 
     retornos_portfolio = pd.DataFrame(lista_portfolio, index=retornos_mensais.index, columns=['Portfólio'])
     retornos_portfolio.reset_index(inplace=True)
-    retornos_portfolio['mes'] = retornos_portfolio['Date'].dt.month
+    retornos_portfolio['mes'] = retornos_portfolio.Date.dt.month
     retornos_portfolio['dif'] = retornos_portfolio['mes'].pct_change()
     retornos_portfolio = retornos_portfolio.loc[retornos_portfolio['dif'] != 0]
     retornos_portfolio = retornos_portfolio.drop(columns={'mes', 'dif'})
