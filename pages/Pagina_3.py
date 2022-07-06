@@ -11,6 +11,7 @@ lista_port_final_temp = []
 lista_port_pesos_final_temp = []
 
 lista_port_pesos_final_temp.append(st.session_state.port_pesos_final)
+
 try:
     if st.session_state.port_final:
         lista_port_final_temp.append(st.session_state.port_final)
