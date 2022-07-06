@@ -28,13 +28,8 @@ try:
 except:
     pass
 
-st.info(lista_port_final_temp)
-
 lista_port_final = [y for x in lista_port_final_temp for y in x]
 lista_port_pesos_final = [y for x in lista_port_pesos_final_temp for y in x]
-
-st.info(lista_port_final)
-st.info(lista_port_pesos_final)
 
 data_inicio_port_ajust = []
 if st.session_state.data_inicio:
