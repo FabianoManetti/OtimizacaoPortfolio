@@ -64,7 +64,7 @@ def main():
                     continue
 
         if botao_remover:
-            st.session_state.remover_pesos.append(lista_port_peos_final[lista_port_final.index(ajuste_ticker)])
+            st.session_state.remover_pesos.append(lista_port_pesos_final[lista_port_final.index(ajuste_ticker)])
 
     portfolio_pesos_final_ajust = [x * 100 for x in st.session_state.remover_pesos]
     ativos_remover_ajust =[x.split('.')[0] for x in st.session_state.ativos_remover]
