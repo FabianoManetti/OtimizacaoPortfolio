@@ -24,6 +24,7 @@ except:
     pass
 
 st.info(lista_port_final_temp)
+st.info(lista_port_pesos_final_temp)
 
 lista_port_final = [y for x in lista_port_final_temp for y in x]
 lista_port_pesos_final = [y for x in lista_port_pesos_final_temp for y in x]
