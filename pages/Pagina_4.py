@@ -5,13 +5,32 @@ from datetime import datetime
 import plotly.express as px
 import yfinance as yf
 import streamlit as st
-from pages.Pagina_2 import portfolio_final
-from pages.Pagina_2 import portfolio_pesos_final
 
 cadastro_cia = pd.read_csv('cad_cia_aberta.csv', sep = ',')
 cadastro_fii = pd.read_csv('fundosListados.csv', sep = ',', encoding = 'utf-8')
 cadastro_etf = pd.read_csv('etf_bdr.csv', sep = ';', encoding = 'latin-1')
 cadastro_stocks = pd.read_csv('cadastro_stocks.csv')
+
+lista_port_final = []
+lista_port_pesos_final = []
+
+try:
+    if st.session_state.port_final:
+        lista_port_final.append(st.session_state.port_final)
+except:
+    pass
+
+try:
+    if st.session_state.port_pesos_final:
+        lista_port_pesos_final.append(st.session_state.port_pesos_final)
+except:
+    pass
+
+lista_port_final = lista_port_final[0]
+lista_port_pesos_final = lista_port_pesos_final[0]
+
+st.info(lista_port_final)
+st.info(lista_port_pesos_final)
 
 data_inicio_port_ajust = []
 if st.session_state.data_inicio:
@@ -30,7 +49,7 @@ adicionar_pesos_ajust = [y/100 for x in adicionar_pesos_ajust for y in x]
 
 dicionario_port_final = {}
 
-for i, j in zip(portfolio_final, portfolio_pesos_final):
+for i, j in zip(lista_port_final, lista_port_pesos_final):
     dicionario_port_final[i] = j
 
 remove = [dicionario_port_final.pop(key) for key in st.session_state.ativos_remover]
@@ -95,7 +114,7 @@ def main():
         else:
             print(f'Ativo {i} não corresponde a um ticker válido')
 
-    portfolio_final_ajustado = [i for i in portfolio_final if i not in st.session_state.ativos_remover_check]
+    portfolio_final_ajustado = [i for i in lista_port_final if i not in st.session_state.ativos_remover_check]
     portfolio_final_ajustado = portfolio_final_ajustado + st.session_state.ativos_adicionar_check
 
     dataframe_ajustado = pd.DataFrame()
