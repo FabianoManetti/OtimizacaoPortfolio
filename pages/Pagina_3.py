@@ -1,15 +1,34 @@
 import pandas as pd
 import streamlit as st
-from pages.Pagina_2 import portfolio_final
-from pages.Pagina_2 import portfolio_pesos_final
+
 
 cadastro_cia = pd.read_csv('cad_cia_aberta.csv', sep = ',')
 cadastro_fii = pd.read_csv('fundosListados.csv', sep = ',', encoding = 'utf-8')
 cadastro_etf = pd.read_csv('etf_bdr.csv', sep = ';', encoding = 'latin-1')
 cadastro_stocks = pd.read_csv('cadastro_stocks.csv')
 
-st.info(st.session_state.port_final)
-st.info(portfolio_pesos_final)
+lista_port_final = []
+lista_port_pesos_final = []
+
+try:
+    if st.session_state.port_final:
+        lista_port_final.append(st.session_state.port_final)
+except:
+    pass
+
+try:
+    if st.session_state.port_pesos_final:
+        lista_port_pesos_final.append(st.session_state.port_pesos_final)
+except:
+    pass
+
+lista_port_final = lista_port_final[0]
+lista_port_pesos_final = lista_port_pesos_final[0]
+
+st.info(lista_port_final)
+st.info(lista_port_pesos_final)
+
+
 
 def main():
 
@@ -36,14 +55,14 @@ def main():
                 ajuste_ticker = remove_ativo
             else:
                 st.info('Insira um ativo válido')
-            for ativo in portfolio_final:
+            for ativo in lista_port_final:
                 if ativo == ajuste_ticker:
                     st.session_state.ativos_remover.append(ativo)
                 else:
                     continue
 
         if botao_remover:
-            st.session_state.remover_pesos.append(portfolio_pesos_final[portfolio_final.index(ajuste_ticker)])
+            st.session_state.remover_pesos.append(lista_port_peos_final[lista_port_final.index(ajuste_ticker)])
 
     portfolio_pesos_final_ajust = [x * 100 for x in st.session_state.remover_pesos]
     ativos_remover_ajust =[x.split('.')[0] for x in st.session_state.ativos_remover]
