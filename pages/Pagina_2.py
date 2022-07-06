@@ -52,6 +52,8 @@ portfolio_final_brasil = lista_acoes + lista_fiis + lista_etfs
 portfolio_final_brasil = [y + '.SA' for x in portfolio_final_brasil for y in x]
 portfolio_final = portfolio_final_brasil + lista_exterior[0]
 
+st.info(portfolio_final)
+
 try:
     if st.session_state.pesos_acoes:
         lista_pesos_acoes.append(st.session_state.pesos_acoes)
@@ -260,5 +262,6 @@ def main():
 
     st.plotly_chart(fig)
 
+    st.info(portfolio_final)
 if __name__ == '__main__':
     main()
