@@ -80,8 +80,6 @@ portfolio_pesos_final = lista_pesos_acoes + lista_pesos_fiis + lista_pesos_etfs 
 portfolio_pesos_final = [y/100 for x in portfolio_pesos_final for y in x]
 portfolio_pesos_final = np.array(portfolio_pesos_final)
 
-st.info(portfolio_pesos_final)
-
 if len(lista_acoes) == 0:
     lista_acoes.append([])
 if len(lista_fiis) == 0:
@@ -105,7 +103,6 @@ def main():
     if 'port_pesos_final' not in st.session_state:
         st.session_state.port_pesos_final = portfolio_pesos_final
         
-    st.info(st.session_state.port_pesos_final)   
     st.dataframe(dt)
 
     data_final = datetime.today().strftime('%Y-%m-%d')
