@@ -31,9 +31,6 @@ except:
 lista_port_final = [y for x in lista_port_final_temp for y in x]
 lista_port_pesos_final = [y for x in lista_port_pesos_final_temp for y in x]
 
-st.info(lista_port_final)
-st.info(lista_port_pesos_final)
-
 data_inicio_port_ajust = []
 if st.session_state.data_inicio:
     data_inicio_port_ajust.append(st.session_state.data_inicio[-1])
@@ -53,13 +50,8 @@ dicionario_port_final = {}
 
 for i, j in zip(lista_port_final, lista_port_pesos_final):
     dicionario_port_final[i] = j
-
-    
-st.info(dicionario_port_final)
    
 remove = [dicionario_port_final.pop(key) for key in st.session_state.ativos_remover]
-
-st.info(remove)
 
 portfolio_pesos_ajustado = []
 
@@ -70,8 +62,6 @@ for l in adicionar_pesos_ajust:
     portfolio_pesos_ajustado.append(l)
 
 portfolio_pesos_ajustado = np.array(portfolio_pesos_ajustado)
-
-st.info(portfolio_pesos_ajustado)
 
 lista_ativos_adicionar = []
 lista_ativos_remover = []
@@ -95,9 +85,6 @@ if len(lista_ativos_remover) == 0:
 
 ativos_adicionar_final = list(set(lista_ativos_adicionar[0]))
 ativos_remover_final = list(set(lista_ativos_remover[0]))
-
-st.info(ativos_adicionar_final)
-st.info(ativos_remover_final)
 
 def main():
 
@@ -124,15 +111,10 @@ def main():
             st.session_state.ativos_remover_check.append(i)
         else:
             print(f'Ativo {i} não corresponde a um ticker válido')
-            
-    st.info(st.session_state.ativos_adicionar_check)
-    st.info(st.session_state.ativos_remover_check)
-
+          
     portfolio_final_ajustado = [i for i in lista_port_final if i not in st.session_state.ativos_remover_check]
     portfolio_final_ajustado = portfolio_final_ajustado + st.session_state.ativos_adicionar_check
     
-    st.info(portfolio_final_ajustado)
-
     dataframe_ajustado = pd.DataFrame()
 
     data_final_ajust = datetime.today().strftime('%Y-%m-%d')
@@ -144,8 +126,6 @@ def main():
 
     cov_matrix_anual_ajustado = retornos_diarios_ajustados.cov() * 252
     
-    st.info(cov_matrix_anual_ajustado)
-
     port_var_ajustado = np.dot(portfolio_pesos_ajustado.T, np.dot(cov_matrix_anual_ajustado, portfolio_pesos_ajustado))
 
     port_vol_ajustado = np.sqrt(port_var_ajustado) * 100
