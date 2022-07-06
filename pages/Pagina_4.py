@@ -114,7 +114,7 @@ def main():
 
     for i in ativos_adicionar_final:
 
-        if i.strip('.SA') in cadastro_cia['TICKER'].values or i.strip('.SA') in cadastro_fii['codigo'].values or i.strip('.SA') in cadastro_etf['Código'].values or i in cadastro_stocks['Código'].values:
+        if i.split('.')[0] in cadastro_cia['TICKER'].values or i.split('.')[0] in cadastro_fii['codigo'].values or i.split('.')[0] in cadastro_etf['Código'].values or i in cadastro_stocks['Código'].values:
             st.session_state.ativos_adicionar_check.append(i)
         else:
             print(f'Ativo {i} não corresponde a um ticker válido')
