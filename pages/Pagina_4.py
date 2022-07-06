@@ -96,6 +96,8 @@ if len(lista_ativos_remover) == 0:
 ativos_adicionar_final = list(set(lista_ativos_adicionar[0]))
 ativos_remover_final = list(set(lista_ativos_remover[0]))
 
+st.info(ativos_adicionar_final)
+st.info(ativos_remover_final)
 
 def main():
 
@@ -122,6 +124,9 @@ def main():
             st.session_state.ativos_remover_check.append(i)
         else:
             print(f'Ativo {i} não corresponde a um ticker válido')
+            
+    st.info(st.session_state.ativos_adicionar_check)
+    st.info(st.session_state.ativos_remover_check)
 
     portfolio_final_ajustado = [i for i in lista_port_final if i not in st.session_state.ativos_remover_check]
     portfolio_final_ajustado = portfolio_final_ajustado + st.session_state.ativos_adicionar_check
