@@ -100,6 +100,9 @@ def main():
     if 'port_final' not in st.session_state:
         st.session_state.port_final = portfolio_final
         
+    if 'port_pesos_final' not in st.session_state:
+        st.session_state.port_pesos_final = portfolio_pesos_final
+        
     st.dataframe(dt)
 
     data_final = datetime.today().strftime('%Y-%m-%d')
