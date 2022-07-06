@@ -99,7 +99,7 @@ def main():
     
     if 'teste' not in st.session_state:
         st.session_state.teste = []
-        st.session_state.append(portfolio_final)
+        st.session_state.teste.append(portfolio_final)
     
     st.info(st.session_state.teste)
         
