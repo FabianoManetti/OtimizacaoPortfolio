@@ -97,12 +97,8 @@ def main():
     if round(np.sum(portfolio_pesos_final), 2) != 1:
         st.info(f'Percentual atual do portfólio: {np.sum(portfolio_pesos_final * 100)}%. Os ativos inseridos devem representar 100 %.')
     
-    if 'teste' not in st.session_state:
-        st.session_state.teste = portfolio_final
-        #st.session_state.teste = []
-        #st.session_state.teste.append(portfolio_final)
-    
-    st.info(st.session_state.teste)
+    if 'port_final' not in st.session_state:
+        st.session_state.port_final = portfolio_final
         
     st.dataframe(dt)
 
