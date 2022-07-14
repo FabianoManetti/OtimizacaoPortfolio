@@ -150,131 +150,136 @@ def main():
         retornos = np.sum(i * portfolio_pesos_ajustado)
         lista_portfolio.append(retornos)
 
-    retornos_portfolio = pd.DataFrame(lista_portfolio, index=retornos_mensais_ajust.index, columns=['Portfólio'])
-    retornos_portfolio.reset_index(inplace=True)
-    retornos_portfolio['mes'] = retornos_portfolio.Date.dt.month
-    retornos_portfolio['dif'] = retornos_portfolio['mes'].pct_change()
-    retornos_portfolio = retornos_portfolio.loc[retornos_portfolio['dif'] != 0]
-    retornos_portfolio = retornos_portfolio.drop(columns={'mes', 'dif'})
-    retornos_portfolio.set_index('Date', inplace=True)
-    retornos_portfolio = (1 + retornos_portfolio).cumprod() - 1
-    retornos_portfolio.index.name = 'Período'
+    try:    
+        
+        retornos_portfolio = pd.DataFrame(lista_portfolio, index=retornos_mensais_ajust.index, columns=['Portfólio'])
+        retornos_portfolio.reset_index(inplace=True)
+        retornos_portfolio['mes'] = retornos_portfolio.Date.dt.month
+        retornos_portfolio['dif'] = retornos_portfolio['mes'].pct_change()
+        retornos_portfolio = retornos_portfolio.loc[retornos_portfolio['dif'] != 0]
+        retornos_portfolio = retornos_portfolio.drop(columns={'mes', 'dif'})
+        retornos_portfolio.set_index('Date', inplace=True)
+        retornos_portfolio = (1 + retornos_portfolio).cumprod() - 1
+        retornos_portfolio.index.name = 'Período'
 
-    ibov = pd.DataFrame()
-    ibov['IBOV'] = yf.download('^BVSP', start=data_inicio_port_ajust, end=data_final_ajust, interval='1mo')['Adj Close']
-    ibov = ibov.pct_change()
-    ibov.reset_index(inplace=True)
-    ibov['mes'] = ibov.Date.dt.month
-    ibov['dif'] = ibov['mes'].pct_change()
-    ibov = ibov.loc[ibov['dif'] != 0]
-    ibov = ibov.drop(columns={'mes', 'dif'})
-    ibov.set_index('Date', inplace=True)
-    ibov = (1 + ibov).cumprod() - 1
-    ibov.index.name = 'Período'
+        ibov = pd.DataFrame()
+        ibov['IBOV'] = yf.download('^BVSP', start=data_inicio_port_ajust, end=data_final_ajust, interval='1mo')['Adj Close']
+        ibov = ibov.pct_change()
+        ibov.reset_index(inplace=True)
+        ibov['mes'] = ibov.Date.dt.month
+        ibov['dif'] = ibov['mes'].pct_change()
+        ibov = ibov.loc[ibov['dif'] != 0]
+        ibov = ibov.drop(columns={'mes', 'dif'})
+        ibov.set_index('Date', inplace=True)
+        ibov = (1 + ibov).cumprod() - 1
+        ibov.index.name = 'Período'
 
-    url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
-    cdi = pd.read_json(url_bcb)
-    cdi['data'] = pd.to_datetime(cdi['data'], dayfirst=True)
-    cdi.set_index('data', inplace=True)
-    cdi = cdi.loc[data_inicio_port_ajust:]
-    cdi.reset_index(inplace=True)
-    cdi['mes'] = cdi.data.dt.month
-    cdi['dif'] = cdi['mes'].pct_change()
-    cdi = cdi.loc[cdi['dif'] != 0]
-    cdi = cdi.drop(columns={'mes', 'dif'})
-    cdi.set_index('data', inplace=True)
-    cdi = cdi / 100
-    cdi = (1 + cdi).cumprod() - 1
-    cdi.index.name = 'Período'
-    cdi.rename(columns={'valor': 'CDI'}, inplace=True)
+        url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
+        cdi = pd.read_json(url_bcb)
+        cdi['data'] = pd.to_datetime(cdi['data'], dayfirst=True)
+        cdi.set_index('data', inplace=True)
+        cdi = cdi.loc[data_inicio_port_ajust:]
+        cdi.reset_index(inplace=True)
+        cdi['mes'] = cdi.data.dt.month
+        cdi['dif'] = cdi['mes'].pct_change()
+        cdi = cdi.loc[cdi['dif'] != 0]
+        cdi = cdi.drop(columns={'mes', 'dif'})
+        cdi.set_index('data', inplace=True)
+        cdi = cdi / 100
+        cdi = (1 + cdi).cumprod() - 1
+        cdi.index.name = 'Período'
+        cdi.rename(columns={'valor': 'CDI'}, inplace=True)
 
-    url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'
-    ipca = pd.read_json(url_bcb)
-    ipca['data'] = pd.to_datetime(ipca['data'], dayfirst=True)
-    ipca.set_index('data', inplace=True)
-    ipca = ipca.loc[data_inicio_port_ajust:]
-    ipca.reset_index(inplace=True)
-    ipca['mes'] = ipca.data.dt.month
-    ipca['dif'] = ipca['mes'].pct_change()
-    ipca = ipca.loc[ipca['dif'] != 0]
-    ipca = ipca.drop(columns={'mes', 'dif'})
-    ipca.set_index('data', inplace=True)
-    ipca = ipca / 100
-    ipca['IPCA + 6%'] = ((1 + ipca['valor']) * (1 + 0.004867)) - 1
-    ipca = (1 + ipca).cumprod() - 1
-    ipca.index.name = 'Período'
-    ipca.rename(columns={'valor': 'IPCA'}, inplace=True)
+        url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'
+        ipca = pd.read_json(url_bcb)
+        ipca['data'] = pd.to_datetime(ipca['data'], dayfirst=True)
+        ipca.set_index('data', inplace=True)
+        ipca = ipca.loc[data_inicio_port_ajust:]
+        ipca.reset_index(inplace=True)
+        ipca['mes'] = ipca.data.dt.month
+        ipca['dif'] = ipca['mes'].pct_change()
+        ipca = ipca.loc[ipca['dif'] != 0]
+        ipca = ipca.drop(columns={'mes', 'dif'})
+        ipca.set_index('data', inplace=True)
+        ipca = ipca / 100
+        ipca['IPCA + 6%'] = ((1 + ipca['valor']) * (1 + 0.004867)) - 1
+        ipca = (1 + ipca).cumprod() - 1
+        ipca.index.name = 'Período'
+        ipca.rename(columns={'valor': 'IPCA'}, inplace=True)
 
-    portfolio_final_graf = pd.concat([retornos_portfolio, ipca, cdi, ibov], axis=1, join='inner')
+        portfolio_final_graf = pd.concat([retornos_portfolio, ipca, cdi, ibov], axis=1, join='inner')
 
-    fig = px.line(portfolio_final_graf * 100, height=500, width=980, title='Retorno Histórico Portfólio Ajustado')
+        fig = px.line(portfolio_final_graf * 100, height=500, width=980, title='Retorno Histórico Portfólio Ajustado')
 
-    fig.update_xaxes(
-        rangeslider_visible=True,
-        rangeselector=dict(
-            buttons=list([
-                dict(count=1, label="1m", step="month", stepmode="backward"),
-                dict(count=6, label="6m", step="month", stepmode="backward"),
-                dict(count=1, label="YTD", step="year", stepmode="todate"),
-                dict(count=1, label="1y", step="year", stepmode="backward"),
-                dict(step="all")
-            ])
+        fig.update_xaxes(
+            rangeslider_visible=True,
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1, label="1m", step="month", stepmode="backward"),
+                    dict(count=6, label="6m", step="month", stepmode="backward"),
+                    dict(count=1, label="YTD", step="year", stepmode="todate"),
+                    dict(count=1, label="1y", step="year", stepmode="backward"),
+                    dict(step="all")
+                ])
+            )
         )
-    )
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig)
 
-    risco_retorno_ibov = pd.DataFrame()
-    risco_retorno_ibov['IBOV'] = yf.download('^BVSP', start=data_inicio_port_ajust, end=data_final_ajust, interval='1d')['Adj Close']
-    risco_retorno_ibov = risco_retorno_ibov.pct_change()
-    cov_ibov = risco_retorno_ibov.cov() * 252
-    var_ibov = np.dot([1], np.dot(cov_ibov, [1]))
-    vol_ibov = np.sqrt(var_ibov)
-    ret_anual_ibov = np.sum(risco_retorno_ibov.mean() * [1]) * 252
+        risco_retorno_ibov = pd.DataFrame()
+        risco_retorno_ibov['IBOV'] = yf.download('^BVSP', start=data_inicio_port_ajust, end=data_final_ajust, interval='1d')['Adj Close']
+        risco_retorno_ibov = risco_retorno_ibov.pct_change()
+        cov_ibov = risco_retorno_ibov.cov() * 252
+        var_ibov = np.dot([1], np.dot(cov_ibov, [1]))
+        vol_ibov = np.sqrt(var_ibov)
+        ret_anual_ibov = np.sum(risco_retorno_ibov.mean() * [1]) * 252
 
-    risco_retorno_sp500 = pd.DataFrame()
-    risco_retorno_sp500['SP500'] = yf.download('^GSPC', start=data_inicio_port_ajust, end=data_final_ajust, interval='1d')['Adj Close']
-    risco_retorno_sp500 = risco_retorno_sp500.pct_change()
-    cov_sp500 = risco_retorno_sp500.cov() * 252
-    var_sp500 = np.dot([1], np.dot(cov_sp500, [1]))
-    vol_sp500 = np.sqrt(var_sp500)
-    ret_anual_sp500 = np.sum(risco_retorno_sp500.mean() * [1]) * 252
+        risco_retorno_sp500 = pd.DataFrame()
+        risco_retorno_sp500['SP500'] = yf.download('^GSPC', start=data_inicio_port_ajust, end=data_final_ajust, interval='1d')['Adj Close']
+        risco_retorno_sp500 = risco_retorno_sp500.pct_change()
+        cov_sp500 = risco_retorno_sp500.cov() * 252
+        var_sp500 = np.dot([1], np.dot(cov_sp500, [1]))
+        vol_sp500 = np.sqrt(var_sp500)
+        ret_anual_sp500 = np.sum(risco_retorno_sp500.mean() * [1]) * 252
 
-    url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json'
-    risco_retorno_cdi = pd.read_json(url_bcb)
-    risco_retorno_cdi['data'] = pd.to_datetime(risco_retorno_cdi['data'], dayfirst=True)
-    risco_retorno_cdi.set_index('data', inplace=True)
-    risco_retorno_cdi = risco_retorno_cdi / 100
-    risco_retorno_cdi = risco_retorno_cdi.loc[data_inicio_port_ajust:]
-    cov_cdi = risco_retorno_cdi.cov() * 252
-    var_cdi = np.dot([1], np.dot(cov_cdi, [1]))
-    vol_cdi = np.sqrt(var_cdi)
-    ret_anual_cdi = np.sum(risco_retorno_cdi.mean() * [1]) * 252
+        url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json'
+        risco_retorno_cdi = pd.read_json(url_bcb)
+        risco_retorno_cdi['data'] = pd.to_datetime(risco_retorno_cdi['data'], dayfirst=True)
+        risco_retorno_cdi.set_index('data', inplace=True)
+        risco_retorno_cdi = risco_retorno_cdi / 100
+        risco_retorno_cdi = risco_retorno_cdi.loc[data_inicio_port_ajust:]
+        cov_cdi = risco_retorno_cdi.cov() * 252
+        var_cdi = np.dot([1], np.dot(cov_cdi, [1]))
+        vol_cdi = np.sqrt(var_cdi)
+        ret_anual_cdi = np.sum(risco_retorno_cdi.mean() * [1]) * 252
 
-    url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'
-    risco_retorno_ipca = pd.read_json(url_bcb)
-    risco_retorno_ipca['data'] = pd.to_datetime(risco_retorno_ipca['data'], dayfirst=True)
-    risco_retorno_ipca.set_index('data', inplace=True)
-    risco_retorno_ipca = risco_retorno_ipca / 100
-    risco_retorno_ipca = risco_retorno_ipca.loc[data_inicio_port_ajust:]
-    risco_retorno_ipca = ((1 + risco_retorno_ipca) * (1 + 0.004867)) - 1
-    cov_ipca = risco_retorno_ipca.cov() * 12
-    var_ipca = np.dot([1], np.dot(cov_ipca, [1]))
-    vol_ipca = np.sqrt(var_ipca)
-    ret_anual_ipca = np.sum(risco_retorno_ipca.mean() * [1]) * 12
+        url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'
+        risco_retorno_ipca = pd.read_json(url_bcb)
+        risco_retorno_ipca['data'] = pd.to_datetime(risco_retorno_ipca['data'], dayfirst=True)
+        risco_retorno_ipca.set_index('data', inplace=True)
+        risco_retorno_ipca = risco_retorno_ipca / 100
+        risco_retorno_ipca = risco_retorno_ipca.loc[data_inicio_port_ajust:]
+        risco_retorno_ipca = ((1 + risco_retorno_ipca) * (1 + 0.004867)) - 1
+        cov_ipca = risco_retorno_ipca.cov() * 12
+        var_ipca = np.dot([1], np.dot(cov_ipca, [1]))
+        vol_ipca = np.sqrt(var_ipca)
+        ret_anual_ipca = np.sum(risco_retorno_ipca.mean() * [1]) * 12
 
-    retornos = [portfolio_ret_anual_ajustado, ret_anual_sp500 * 100, ret_anual_ibov * 100, ret_anual_cdi * 100, ret_anual_ipca * 100]
-    volatilidades = [port_vol_ajustado, vol_sp500 * 100, vol_ibov * 100, vol_cdi * 100, vol_ipca * 100]
-    indices = ['Portfólio', 'SP500', 'IBOV', 'CDI', 'IPCA']
+        retornos = [portfolio_ret_anual_ajustado, ret_anual_sp500 * 100, ret_anual_ibov * 100, ret_anual_cdi * 100, ret_anual_ipca * 100]
+        volatilidades = [port_vol_ajustado, vol_sp500 * 100, vol_ibov * 100, vol_cdi * 100, vol_ipca * 100]
+        indices = ['Portfólio', 'SP500', 'IBOV', 'CDI', 'IPCA']
 
-    vol_retorno = pd.DataFrame(data=[retornos, volatilidades, indices]).T
-    vol_retorno = vol_retorno.rename(columns={0: 'retorno %a.a', 1: 'volatilidade %a.a', 2: 'índice'})
+        vol_retorno = pd.DataFrame(data=[retornos, volatilidades, indices]).T
+        vol_retorno = vol_retorno.rename(columns={0: 'retorno %a.a', 1: 'volatilidade %a.a', 2: 'índice'})
 
-    fig = px.scatter(vol_retorno, x='volatilidade %a.a', y='retorno %a.a', color='índice',
-                     title='Retorno x Volatilidade')
-    fig.update_traces(marker_size=15)
+        fig = px.scatter(vol_retorno, x='volatilidade %a.a', y='retorno %a.a', color='índice',
+                         title='Retorno x Volatilidade')
+        fig.update_traces(marker_size=15)
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig)
+        
+    except:
+        pass
 
 if __name__ == '__main__':
     main()
