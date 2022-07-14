@@ -139,61 +139,64 @@ def main():
     for i in retornos_mensais.iloc():
         retornos = np.sum(i * portfolio_pesos_final)
         lista_portfolio.append(retornos)
+    try:
+        retornos_portfolio = pd.DataFrame(lista_portfolio, index=retornos_mensais.index, columns=['Portfólio'])
+        retornos_portfolio.reset_index(inplace=True)
+        retornos_portfolio['mes'] = retornos_portfolio.Date.dt.month
+        retornos_portfolio['dif'] = retornos_portfolio['mes'].pct_change()
+        retornos_portfolio = retornos_portfolio.loc[retornos_portfolio['dif'] != 0]
+        retornos_portfolio = retornos_portfolio.drop(columns={'mes', 'dif'})
+        retornos_portfolio.set_index('Date', inplace=True)
+        retornos_portfolio = (1 + retornos_portfolio).cumprod() - 1
+        retornos_portfolio.index.name = 'Período'
 
-    retornos_portfolio = pd.DataFrame(lista_portfolio, index=retornos_mensais.index, columns=['Portfólio'])
-    retornos_portfolio.reset_index(inplace=True)
-    retornos_portfolio['mes'] = retornos_portfolio.Date.dt.month
-    retornos_portfolio['dif'] = retornos_portfolio['mes'].pct_change()
-    retornos_portfolio = retornos_portfolio.loc[retornos_portfolio['dif'] != 0]
-    retornos_portfolio = retornos_portfolio.drop(columns={'mes', 'dif'})
-    retornos_portfolio.set_index('Date', inplace=True)
-    retornos_portfolio = (1 + retornos_portfolio).cumprod() - 1
-    retornos_portfolio.index.name = 'Período'
+        ibov = pd.DataFrame()
+        ibov['IBOV'] = yf.download('^BVSP', start=data_inicio_portfolio, end=data_final, interval='1mo')['Adj Close']
+        ibov = ibov.pct_change()
+        ibov.reset_index(inplace=True)
+        ibov['mes'] = ibov.Date.dt.month
+        ibov['dif'] = ibov['mes'].pct_change()
+        ibov = ibov.loc[ibov['dif'] != 0]
+        ibov = ibov.drop(columns={'mes', 'dif'})
+        ibov.set_index('Date', inplace=True)
+        ibov = (1 + ibov).cumprod() - 1
+        ibov.index.name = 'Período'
 
-    ibov = pd.DataFrame()
-    ibov['IBOV'] = yf.download('^BVSP', start=data_inicio_portfolio, end=data_final, interval='1mo')['Adj Close']
-    ibov = ibov.pct_change()
-    ibov.reset_index(inplace=True)
-    ibov['mes'] = ibov.Date.dt.month
-    ibov['dif'] = ibov['mes'].pct_change()
-    ibov = ibov.loc[ibov['dif'] != 0]
-    ibov = ibov.drop(columns={'mes', 'dif'})
-    ibov.set_index('Date', inplace=True)
-    ibov = (1 + ibov).cumprod() - 1
-    ibov.index.name = 'Período'
+        url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
+        cdi = pd.read_json(url_bcb)
+        cdi['data'] = pd.to_datetime(cdi['data'], dayfirst=True)
+        cdi.set_index('data', inplace=True)
+        cdi = cdi.loc[data_inicio_portfolio:]
+        cdi.reset_index(inplace=True)
+        cdi['mes'] = cdi.data.dt.month
+        cdi['dif'] = cdi['mes'].pct_change()
+        cdi = cdi.loc[cdi['dif'] != 0]
+        cdi = cdi.drop(columns={'mes', 'dif'})
+        cdi.set_index('data', inplace=True)
+        cdi = cdi / 100
+        cdi = (1 + cdi).cumprod() - 1
+        cdi.index.name = 'Período'
+        cdi.rename(columns={'valor': 'CDI'}, inplace=True)
 
-    url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
-    cdi = pd.read_json(url_bcb)
-    cdi['data'] = pd.to_datetime(cdi['data'], dayfirst=True)
-    cdi.set_index('data', inplace=True)
-    cdi = cdi.loc[data_inicio_portfolio:]
-    cdi.reset_index(inplace=True)
-    cdi['mes'] = cdi.data.dt.month
-    cdi['dif'] = cdi['mes'].pct_change()
-    cdi = cdi.loc[cdi['dif'] != 0]
-    cdi = cdi.drop(columns={'mes', 'dif'})
-    cdi.set_index('data', inplace=True)
-    cdi = cdi / 100
-    cdi = (1 + cdi).cumprod() - 1
-    cdi.index.name = 'Período'
-    cdi.rename(columns={'valor': 'CDI'}, inplace=True)
-
-    url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'
-    ipca = pd.read_json(url_bcb)
-    ipca['data'] = pd.to_datetime(ipca['data'], dayfirst=True)
-    ipca.set_index('data', inplace=True)
-    ipca = ipca.loc[data_inicio_portfolio:]
-    ipca.reset_index(inplace=True)
-    ipca['mes'] = ipca.data.dt.month
-    ipca['dif'] = ipca['mes'].pct_change()
-    ipca = ipca.loc[ipca['dif'] != 0]
-    ipca = ipca.drop(columns={'mes', 'dif'})
-    ipca.set_index('data', inplace=True)
-    ipca = ipca / 100
-    ipca['IPCA + 6%'] = ((1 + ipca['valor']) * (1 + 0.004867)) - 1
-    ipca = (1 + ipca).cumprod() - 1
-    ipca.index.name = 'Período'
-    ipca.rename(columns={'valor': 'IPCA'}, inplace=True)
+        url_bcb = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'
+        ipca = pd.read_json(url_bcb)
+        ipca['data'] = pd.to_datetime(ipca['data'], dayfirst=True)
+        ipca.set_index('data', inplace=True)
+        ipca = ipca.loc[data_inicio_portfolio:]
+        ipca.reset_index(inplace=True)
+        ipca['mes'] = ipca.data.dt.month
+        ipca['dif'] = ipca['mes'].pct_change()
+        ipca = ipca.loc[ipca['dif'] != 0]
+        ipca = ipca.drop(columns={'mes', 'dif'})
+        ipca.set_index('data', inplace=True)
+        ipca = ipca / 100
+        ipca['IPCA + 6%'] = ((1 + ipca['valor']) * (1 + 0.004867)) - 1
+        ipca = (1 + ipca).cumprod() - 1
+        ipca.index.name = 'Período'
+        ipca.rename(columns={'valor': 'IPCA'}, inplace=True)
+        
+    except:
+        pass
 
     portfolio_final_graf = pd.concat([retornos_portfolio, ipca, cdi, ibov], axis=1, join='inner')
 
